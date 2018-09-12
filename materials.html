@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Material Library</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script><!--Dev-->
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>--><!--Prod-->
+    <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+    <script src="/materials.js"></script>
+    
+    <style>
+    </style>
+  </head>  
+  <body>
+    <h1>Material Library</h1>
+    
+    <div id="app">
+      <ol>
+        <li v-for="item in items">{{ item.name }}. Size: {{ item.width }} x {{ item.height }} x {{ item.thickness }} Color: {{ item.color }} <button v-on:click="removeItem(item)">Remove</button></li>
+      </ol>
+      
+      
+      <div>
+        <label>Name: <input v-model="newMaterial.name" /></label>
+        <label>Width (in): <input v-model="newMaterial.width" /></label>
+        <label>Height (in): <input v-model="newMaterial.height" /></label>
+        <label>Thickness (in): <input v-model="newMaterial.thickness" /></label>
+        <label>Color: <input v-model="newMaterial.color" /></label>
+      </div>
+      <button @click="addItem">Add</button>
+    </div>
+        
+    <script>
+      var library = new MaterialLibrary();
+      
+      var app = new Vue({
+        el: "#app",
+        data: {
+          items: library.materials,
+          newMaterial: new Material(),
+        },
+        methods: {
+          addItem: function()
+          {
+            library.addMaterial(this.newMaterial); 
+            app.newMaterial = new Material();
+          },
+          
+          removeItem: function(item)
+          {
+            library.removeMaterial(item.key);
+          }
+        }
+      });
+      
+      firebase.auth().onAuthStateChanged(function(user)
+      {
+        if(user)
+        {
+          console.log("User signed in", user.email);
+        }
+        else
+        {
+          window.location.href = "login.html?return=" + window.location.href;
+        }
+      });
+    </script>
+  </body>
+</html>

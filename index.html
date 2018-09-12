@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Laser Estimator</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <script src="snap.svg-min.js"></script>
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>--><!--Dev-->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script><!--Prod-->
+    <script src="/utils.js"></script>
+    <script src="/plate.js"></script>
+    <script src="/materials.js"></script>
+    <script src="/drawingManager.js"></script>
+    <script src="/sceneManager.js"></script>
+    <script src="/app.js" defer></script>
+    
+    <style>
+      html, body { margin:0;padding:0; }
+      aa-scene { width: 800px; height:600px; }
+      .colorBlock { width:1em; height:1em; border:1px solid white; display: inline-block; }
+      
+      #groupList { list-style:none; padding:0;margin:0;margin-top:1em; }
+      #groupList li { margin-bottom:1em; }
+      #groupList li .extra { display:none; }
+      #groupList li:hover .extra { display:initial; }
+      
+      #groupList img.preview { display:block; }
+    </style>
+  </head>  
+  <body>
+    <div style="position:relative;">
+      <div style="position:absolute;left:0;top:0;">
+        <a-scene light="defaultLightsEnabled: false" background="color: #ECECEC"> <!-- embedded> -->
+          <a-entity scale="10 10 10" position="0 0 0"><!-- TODO: Find out why smaller scales produce strange shadow artifacts -->
+            <a-entity position="0 .02 -0.25" rotation="-90 15 0"> 
+              <!--<a-box id="plateObject" position="0 0 0" color="gray" shadow></a-box>-->
+              <!--<a-gltf-model id="plateObject" shadow src="https://cdn.glitch.com/c3f6036c-73d4-4d3a-98a7-7a92441d1c10%2Fplate.glb?1536545900692"></a-gltf-model>-->
+              <a-entity id="plateObject" plate scale="0.15 0.15 0.15" shadow></a-entity>
+            </a-entity>
+            <a-plane color="green" rotation="-90 0 0" position="0 0 0" width="2" height="2" shadow></a-plane>
+          </a-entity>
+          <!--<a-light type="directional" shadow position="0 2 0" rotation="33 -40 0"></a-light>-->
+          <a-entity light="color:#BBB;type:ambient" data-aframe-default-light="" aframe-injected=""></a-entity>
+          <a-entity light="intensity:0.6;castShadow:true" position=".625 1.3 -3" data-aframe-default-light="" aframe-injected=""></a-entity>
+        </a-scene>
+      </div>
+      
+      <div id="app" style="position:absolute;left:0;top:0;background:gray;padding:1em;">
+        <h1>Laser Estimator</h1>
+        <div v-if="hasDrawing">
+          <h2 id="lengthInLabel">{{ round(lengthInches) }} inches</h2>
+          <h2 id="lengthMmLabel">{{ round(lengthMm) }} mm</h2>
+        </div>
+
+        <input type="file" id="fileInput" onchange="fileSelected(this.files)" />
+        <!--<ol>
+          <li v-for="item in items"><div class="colorBlock" v-bind:style="{ backgroundColor: item.color }"></div> {{ item.name }}. Size: {{ item.width }} x {{ item.height }} x {{ item.thickness }}  <button v-on:click="selectMaterial(item)">Select</button></li>
+        </ol>
+
+        Select a SVG file: 
+
+        <div v-if="selectedMaterial">
+          <h3>
+            Plate is {{ selectedMaterial.width }}" x {{ selectedMaterial.height }}" x {{ selectedMaterial.thickness }}". Click and drag to move view. WASD to move around
+          </h3>
+        </div>
+
+        Drawings Size: {{ drawingBounds.width }}" x {{ drawingBounds.height }}"-->
+        
+        <ul id="groupList">
+          <li>
+            <img class="preview" src="https://via.placeholder.com/100x100" />
+            <div class="extra">
+              asdf
+            </div>
+          </li>
+
+        <!--<ul id="groupList">
+          <li v-for="group in groups">
+            <img class="preview" src="https://via.placeholder.com/100x100" />
+            <div class="extra">
+              <div class="colorBlock" v-bind:style="{ backgroundColor: group.color }"></div>
+              IsRaster: {{ group.isRaster }}
+              IsCut: {{ group.isCut }}
+              <label><input v-model="group.isVisible" type="checkbox" /> Visible</label>
+              {{ group.isVisible }}
+            </div>
+          </li>      
+        </ul>-->
+      </div>
+    
+      
+    </div>
+    
+    
+    
+    
+    <div style="visibility:show;">
+      <div>Debug Image</div>
+      <img id="debugImage" />
+      <div>SVG</div>
+      <svg width="512px" height="512px" viewbox="0 0 1024 512" preserveaspectratio="none" id="outerSvg"></svg>
+      <div>Canvas</div>
+      <canvas style="display:block;margin-top:1em" width="512" height="512" id="canvasSurface"></canvas>
+    </div>
+      
+    
+  
+    <!-- include the Glitch button to show what the webpage is about and
+          to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>
