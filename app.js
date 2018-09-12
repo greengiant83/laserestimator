@@ -11,13 +11,24 @@ var app = new Vue({
     lengthInches: 0,
     drawingSize: { width: 0, height: 0 }, //used by SVG and canvasSurfaces
     groups: [],
-    drawingBounds: { width: 0, height: 0 } //dimensions of bounding box of actual drawing
+    drawingBounds: { width: 0, height: 0 }, //dimensions of bounding box of actual drawing
+    testVal: 1
   },
   
   computed: {
     lengthMm: function() 
     {
       return this.lengthInches * 25.4;
+    },
+    
+    testLabel: function()
+    {
+      var labels = [
+        "Light Etch",
+        "Deep Etch",
+        "Cut"
+      ]
+      return labels[this.testVal]
     }
   },
   

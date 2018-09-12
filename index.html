@@ -23,12 +23,12 @@
       aa-scene { width: 800px; height:600px; }
       .colorBlock { width:1em; height:1em; border:1px solid white; display: inline-block; }
       
-      #groupList { list-style:none; padding:0;margin:0;margin-top:1em; }
-      #groupList li { margin-bottom:1em; }
+      #groupList { list-style:none; padding:0;margin:0;margin-top:1em;display:inline-block; }
+      #groupList li { margin-bottom:1em;background:gray;padding:1em; }
       #groupList li .extra { display:none; }
       #groupList li:hover .extra { display:initial; }
       
-      #groupList img.preview { display:block; }
+      #groupList img.preview { display:block;border: 2px solid black; }
     </style>
   </head>  
   <body>
@@ -49,21 +49,46 @@
         </a-scene>
       </div>
       
-      <div id="app" style="position:absolute;left:0;top:0;background:gray;padding:1em;">
-        <h1>Laser Estimator</h1>
-        <div v-if="hasDrawing">
-          <h2 id="lengthInLabel">{{ round(lengthInches) }} inches</h2>
-          <h2 id="lengthMmLabel">{{ round(lengthMm) }} mm</h2>
-        </div>
+      <div id="app" style="position:absolute;left:0;top:0;padding:1em;">
+        <div style="background:gray;padding:1em;">
+          <h1>Laser Estimator</h1>
+          <div v-if="hasDrawing">
+            <h2 id="lengthInLabel">{{ round(lengthInches) }} inches</h2>
+            <h2 id="lengthMmLabel">{{ round(lengthMm) }} mm</h2>
+          </div>
 
-        <input type="file" id="fileInput" onchange="fileSelected(this.files)" />
-        <!--<ol>
+          <input type="file" id="fileInput" onchange="fileSelected(this.files)" />
+        </div>
+        
+        <ul id="groupList">
+          <li v-for="group in groups">
+            <img v-bind:style="{ borderColor: group.color }" class="preview" src="https://via.placeholder.com/100x100" />
+            <div class="notextra" style="margin-top:1em;">
+              <div>
+                <div style="text-align:center;">{{ testLabel }}</div>
+                <input class="extra" style="width:100px" type="range" list="vectorTicks" id="start" name="volume" min="0" max="2" v-model="group.mode" />
+              </div>
+              <div class="extra">
+                <label><input type="checkbox" v-model="group.isRaster" />Filled</label>
+              </div>
+            </div>
+          </li>
+        </ul>
+        
+        <datalist id="vectorTicks">
+          <option value="0"></option>
+          <option value="1"></option>
+          <option value="2"></option>
+        </datalist>
+
+        
+        <ol>
           <li v-for="item in items"><div class="colorBlock" v-bind:style="{ backgroundColor: item.color }"></div> {{ item.name }}. Size: {{ item.width }} x {{ item.height }} x {{ item.thickness }}  <button v-on:click="selectMaterial(item)">Select</button></li>
         </ol>
 
-        Select a SVG file: 
+        
 
-        <div v-if="selectedMaterial">
+        <!--<div v-if="selectedMaterial">
           <h3>
             Plate is {{ selectedMaterial.width }}" x {{ selectedMaterial.height }}" x {{ selectedMaterial.thickness }}". Click and drag to move view. WASD to move around
           </h3>
@@ -71,35 +96,10 @@
 
         Drawings Size: {{ drawingBounds.width }}" x {{ drawingBounds.height }}"-->
         
-        <ul id="groupList">
-          <li>
-            <img class="preview" src="https://via.placeholder.com/100x100" />
-            <div class="extra">
-              asdf
-            </div>
-          </li>
-
-        <!--<ul id="groupList">
-          <li v-for="group in groups">
-            <img class="preview" src="https://via.placeholder.com/100x100" />
-            <div class="extra">
-              <div class="colorBlock" v-bind:style="{ backgroundColor: group.color }"></div>
-              IsRaster: {{ group.isRaster }}
-              IsCut: {{ group.isCut }}
-              <label><input v-model="group.isVisible" type="checkbox" /> Visible</label>
-              {{ group.isVisible }}
-            </div>
-          </li>      
-        </ul>-->
-      </div>
-    
-      
+      </div>  
     </div>
     
-    
-    
-    
-    <div style="visibility:show;">
+    <div style="visibility:hidden;">
       <div>Debug Image</div>
       <img id="debugImage" />
       <div>SVG</div>
