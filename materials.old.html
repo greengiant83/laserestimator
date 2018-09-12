@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Material Library</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script><!--Dev-->
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>--><!--Prod-->
+    <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+    
+    <style>
+    </style>
+  </head>  
+  <body>
+    <h1>Material Library</h1>
+    
+    <div id="app">
+      <ol>
+        <li v-for="item in items">{{ item.name }}. Size: {{ item.width }} x {{ item.height }} x {{ item.thickness }} Color: {{ item.color }} <button v-on:click="removeItem(item)">Remove</button></li>
+      </ol>
+      
+      
+      <div>
+        <label>Name: <input v-model="newMaterial.name" /></label>
+        <label>Width (in): <input v-model="newMaterial.width" /></label>
+        <label>Height (in): <input v-model="newMaterial.height" /></label>
+        <label>Thickness (in): <input v-model="newMaterial.thickness" /></label>
+        <label>Color: <input v-model="newMaterial.color" /></label>
+      </div>
+      <button @click="addItem">Add</button>
+    </div>
+        
+    <script>
+      class Material
+      {
+        constructor()
+        {
+          this.name = "";
+          this.width = null;
+          this.height = null;
+          this.thickness = null;
+          this.color = "red";
+        }
+      }
+      
+      class MaterialLibrary
+      {
+        constructor()
+        {
+          this.materials = [];
+        }
+      }
+      
+      var config = {
+        apiKey: "AIzaSyBWZhcn910DaD0Do1XhZGiWGk68zHFzAh8",
+        authDomain: "material-library.firebaseapp.com",
+        databaseURL: "https://material-library.firebaseio.com",
+        projectId: "material-library",
+        storageBucket: "material-library.appspot.com",
+        messagingSenderId: "1074400192295"
+      };
+      firebase.initializeApp(config);
+
+      var db = firebase.database();
+      var materialsRef = db.ref("materials");
+      var library = new MaterialLibrary();
+      
+      var app = new Vue({
+        el: "#app",
+        data: {
+          items: library.materials,
+          newMaterial: new Material(),
+        },
+        methods: {
+          addItem: function()
+          {
+            var data = this.newMaterial;
+            var ref = materialsRef.push();
+            ref.set({
+              name: data.name,
+              width: data.width*1,
+              height: data.height*1,
+              thickness: data.thickness*1,
+              color: data.color              
+            });
+            
+            app.newMaterial = new Material();
+          },
+          
+          removeItem: function(item)
+          {
+            materialsRef.child(item.key).remove();
+          }
+        }
+      });
+      
+      console.log("oi");
+      
+      materialsRef.on("child_added", function(snap)
+      {
+        var data = snap.val();
+        library.materials.push({ 
+          key: snap.key,
+          name: data.name,
+          width: data.width,
+          height: data.height,
+          thickness: data.thickness,
+          color: data.color
+        });
+      });
+      
+      materialsRef.on("child_removed", function(snap)
+      {
+        var index = null;
+        for(var i=0;i<app.items.length;i++)
+        {
+          if(app.items[i].key == snap.key)
+          {
+            index = i;
+            break;
+          }
+        }
+        if(index != null) app.items.splice(index, 1);
+      });
+      
+      firebase.auth().onAuthStateChanged(function(user)
+      {
+        if(user)
+        {
+          console.log("User signed in", user.email);
+        }
+        else
+        {
+          window.location.href = "login.html?return=" + window.location.href;
+        }
+      });     
+    </script>
+  </body>
+</html>

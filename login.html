@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+  </head>  
+  <body>
+    <div id="panels">
+      <div id="loading" class="panel">
+        <h1>Loading...</h1>
+      </div>
+      
+      <div id="login" class="panel">
+        <h1>
+          Login
+        </h1>
+        <label>Email: <input id="loginemail" /></label>
+        <label>Password: <input id="loginpassword" type="password" /></label>
+        <button onclick="login()">Login</button>
+      </div>
+
+      <div id="loggedin" class="panel">
+        <h1>
+          Logged in as <span id="usernameLabel"></span>
+        </h1>
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+        
+    <script>
+      var config = {
+        apiKey: "AIzaSyBWZhcn910DaD0Do1XhZGiWGk68zHFzAh8",
+        authDomain: "material-library.firebaseapp.com",
+        databaseURL: "https://material-library.firebaseio.com",
+        projectId: "material-library",
+        storageBucket: "material-library.appspot.com",
+        messagingSenderId: "1074400192295"
+      };
+      firebase.initializeApp(config);
+      var db = firebase.database();
+      
+      showPanel("loading");
+      
+      firebase.auth().onAuthStateChanged(function(user)
+      {
+        if(user)
+        {
+          document.querySelector("#usernameLabel").innerText = user.email;
+          showPanel("loggedin");
+          
+          var urlParams = new URLSearchParams(window.location.search);
+          var returnUrl = urlParams.get("return");
+          if(returnUrl)
+          {
+            window.location.href = returnUrl;
+          }
+        }
+        else
+        {
+          showPanel("login");
+        }
+      });
+      
+      function login()
+      {
+        var email = document.querySelector("#loginemail").value;
+        var password = document.querySelector("#loginpassword").value;
+        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error)
+        {
+          alert("Error logging in: " + error.code + ": " + error.message);
+        });
+      }
+      
+      function logout()
+      {
+        firebase.auth().signOut().catch(error => { console.log("Error signing out", error); });
+      }
+      
+      function showPanel(id)
+      {
+        var panels = document.querySelectorAll("#panels .panel");
+        panels.forEach(panel => {
+          var display = panel.id == id ? "initial" : "none";
+          panel.style.display = display;
+        });
+      }
+    </script>
+  </body>
+</html>
