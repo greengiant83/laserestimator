@@ -39,10 +39,10 @@ class DrawingManager
         self.discoverDPI();
         self.findItems();
         self.updateLength();
-        self.updateStyles();
-        self.updateBounds();
+        self.updateBounds();        
         self.updateViewbox();
-        
+        self.updateStyles();
+
         resolve();
       });
     });
@@ -92,7 +92,6 @@ class DrawingManager
         this.dpi *= 1;
         break;
     }   
-    console.log("DPI: ", this.dpi);
   }
 
   findItems()
@@ -143,7 +142,6 @@ class DrawingManager
     });
     app.drawingBounds.width = this.bounds.right - this.bounds.left;
     app.drawingBounds.height = this.bounds.bottom - this.bounds.top;
-    console.log(this.bounds);
   }
 
   updateStyles()
@@ -165,7 +163,8 @@ class DrawingManager
           isCut: !isRaster,
           mode: 0,
           color: color,
-          items: []
+          items: [],
+          image: null
         }
         app.groups.push(group);
       }
@@ -180,6 +179,37 @@ class DrawingManager
 
       i.node.className.baseVal = "";
     });
+  }
+
+  toggleGroup(index, isVisible)
+  {
+    app.groups.forEach((group, groupIndex) => {
+      console.log(groupIndex, group.items.length);
+      group.items.forEach(item => {
+        if(groupIndex == index) 
+        {
+          item.attr({ display: isVisible ? "" : "none" });
+        }
+      });
+    });
+  }
+
+  isolateGroup(group)
+  {
+    app.groups.forEach(g => {
+      group.items.forEach(item => {
+        item.attr({ display: g === group ? "" : "none" });
+      });
+    });    
+  }
+
+  showAllGroups()
+  {
+    app.groups.forEach((group, groupIndex) => {
+      group.items.forEach(item => {
+        item.attr({ display: "" });
+      });
+    });    
   }
 
   updateViewbox()

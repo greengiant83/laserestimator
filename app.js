@@ -48,7 +48,21 @@ var app = new Vue({
       return value;
     },
     
-    getModeLabel
+    getModeLabel: function(group)
+    {
+      if(!group.isRaster)
+        return [
+          "Cut" ,
+          "Deep Etch",
+          "Light Etch",
+        ][group.mode];
+      else
+        return [
+          "Deep Etch",
+          "Medium Etch",
+          "Light Etch",
+        ][group.mode];
+    }
   }
 });
 
@@ -57,7 +71,7 @@ var sceneManager = new SceneManager("#canvasSurface", "#outerSvg", "#plateObject
 
 var unwatchItems = app.$watch("items", function(val)
 {
-  if(app.items.length > 0) app.selectedMaterial = app.items[0];
+  if(app.items.length > 0) app.selectedMaterial = app.items[app.items.length-1];
   unwatchItems();
 });
 

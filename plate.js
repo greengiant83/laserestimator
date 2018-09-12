@@ -117,11 +117,13 @@ AFRAME.registerComponent("plate", {
     
     this.loader = new THREE.TextureLoader();
     
-    var envMap = this.loader.load("https://cdn.glitch.com/c3f6036c-73d4-4d3a-98a7-7a92441d1c10%2FenvMap.png?1536589267784");
+    var envMap = this.loader.load("envmap.jpg");
+    //var envMap = this.loader.load("https://cdn.glitch.com/c3f6036c-73d4-4d3a-98a7-7a92441d1c10%2FenvMap.png?1536589267784");
     envMap.mapping = THREE.SphericalReflectionMapping;
     this.material.envMap = envMap;
     this.material.roughness = 0;
     this.material.metalness = 0;
+    this.material.envMapIntensity = 10;
     
     testPlate = this;
   },

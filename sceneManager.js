@@ -51,6 +51,51 @@ class SceneManager
     ]).then(() => self.updateRoughnessImage());
   }
   
+  newupdateDrawingImage()
+  {
+    var self = this;
+    return new Promise(function (resolve, reject)
+    {
+      var tasks = []
+      app.groups.forEach((group, groupIndex) => {
+        tasks.push(self.updateGroupImage(group));
+      });
+
+      /*tasks.reduce((promiseChain, currentTask) =>
+      {
+        promiseChain.then(chainResults =>)
+      }, Promise.resolve([])).then(i =>
+      {
+        console.log("Images loaded");
+      })*/
+
+      Promise.all(tasks).then(i => {
+        console.log("Images loaded");
+      })
+    });
+  }
+
+  updateGroupImage(group)
+  {
+    var self = this;
+    return new Promise(function(resolve, reject)
+    {
+      drawingManager.isolateGroup(group);
+      var svgString = new XMLSerializer().serializeToString(self.sourceSvg);
+      self.drawingImage = new Image();
+      var svgData = new Blob([svgString], { type: "image/svg+xml;charset=utf-8"});
+      group.imageDataUrl = DOMURL.createObjectURL(svgData);
+      
+      group.image = new Image();
+      group.image.onload = function()
+      {
+        //DOMURL.revokeObjectURL(dataUrl);        
+        resolve();
+      }
+      group.image.src = group.imageDataUrl;
+    })
+  }
+
   updateDrawingImage()
   {
     var self = this;
