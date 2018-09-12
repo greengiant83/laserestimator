@@ -163,6 +163,7 @@ class DrawingManager
           isVisible: true,
           isRaster: isRaster,
           isCut: !isRaster,
+          mode: 0,
           color: color,
           items: []
         }
