@@ -60,12 +60,16 @@
           <input type="file" id="fileInput" onchange="fileSelected(this.files)" />
         </div>
         
+        <ol>
+          <li v-for="item in items"><div class="colorBlock" v-bind:style="{ backgroundColor: item.color }"></div> {{ item.name }}. Size: {{ item.width }} x {{ item.height }} x {{ item.thickness }}  <button v-on:click="selectMaterial(item)">Select</button></li>
+        </ol>
+        
         <ul id="groupList">
           <li v-for="group in groups">
             <img v-bind:style="{ borderColor: group.color }" class="preview" src="https://via.placeholder.com/100x100" />
             <div class="notextra" style="margin-top:1em;">
               <div>
-                <div style="text-align:center;">{{ testLabel }}</div>
+                <div style="text-align:center;">{{ getModeLabel(group) }}</div>
                 <input class="extra" style="width:100px" type="range" list="vectorTicks" id="start" name="volume" min="0" max="2" v-model="group.mode" />
               </div>
               <div class="extra">
@@ -82,9 +86,7 @@
         </datalist>
 
         
-        <ol>
-          <li v-for="item in items"><div class="colorBlock" v-bind:style="{ backgroundColor: item.color }"></div> {{ item.name }}. Size: {{ item.width }} x {{ item.height }} x {{ item.thickness }}  <button v-on:click="selectMaterial(item)">Select</button></li>
-        </ol>
+        
 
         
 

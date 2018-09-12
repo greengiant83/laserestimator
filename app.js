@@ -46,7 +46,9 @@ var app = new Vue({
       var scale = Math.pow(10, decimals);
       value = Math.round(value * scale) / scale;
       return value;
-    }
+    },
+    
+    getModeLabel
   }
 });
 
